@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FunScience Gallery — Viewer</title>
+<style>
+  :root{
+    --bg:#f3f8ff; --card:#fff; --accent:#2a5298; --muted:#6b7280;
+    --fun1:#ff9ab8; --fun2:#7edcf6; --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html, body{ height:100%; }
+  body{
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    background: linear-gradient(180deg,#eff7ff 0%, var(--bg) 100%);
+    color:#082032; padding:14px; -webkit-font-smoothing:antialiased;
+    display:flex; justify-content:center;
+    min-height: 100vh;
+  }
+
+  .frame{
+    width:100%; max-width:420px; background:var(--card); border-radius:16px;
+    box-shadow:0 12px 40px rgba(12,18,40,0.08); overflow:hidden; display:flex; flex-direction:column;
+
+    height: calc(100vh - 28px);
+    max-height: 85vh;
+  }
+
+  /* top bar */
+  .topbar{ display:flex; align-items:center; 
+    gap:8px; padding:12px 14px; 
+    background:linear-gradient(90deg,var(--fun2),var(--fun1)); 
+    color:#042037; }
+  .lang-wrap{ display:flex; align-items:center; gap:8px; }
+  .lang-select{ padding:8px 10px; border-radius:10px; border:none; font-weight:700; }
+  .title{ flex:1; text-align:center; font-weight:800; letter-spacing:0.2px; font-size:1rem; color:#042037; }
+  .info-btn{ width:36px; height:36px; border-radius:10px; display:inline-grid; place-items:center; background:rgba(255,255,255,0.12); cursor:pointer; }
+
+  /* image area */
+  .image-area{ padding:14px; 
+    display:flex; 
+    justify-content:center; 
+    align-items:center; 
+    background:linear-gradient(180deg,#ffffff,#f7fbff); }
+  .image-area img{ width:100%; 
+    height:auto; max-height: 30vh; 
+    aspect-ratio:16/9;
+    object-fit:cover; border-radius:12px; 
+    box-shadow:0 8px 20px rgba(12,18,40,0.05); }
+
+  /* content */
+  .content{ padding:12px 14px; display:flex; 
+    flex-direction:column; gap:10px; 
+    flex: 1 1 auto; min-height:0;
+    min-height: 0; overflow:auto; -webkit-overflow-scrolling:touch; 
+    }
+  .photo-heading{ font-weight:800; font-size:1.05rem; text-align:left; color:#062034; }
+  .desc{ color:var(--muted); 
+    font-size:0.95rem; 
+    line-height:1.45; 
+    min-height:72px; 
+    background:linear-gradient(180deg, rgba(250,250,255,0.7), transparent); 
+    padding:10px; 
+    border-radius:10px; }
+  
+  /* .audio-player{ padding:10px 14px; background:linear-gradient(180deg,#ffffff,#f8fbff); flex:0 0 auto; }
+  .audio-player audio{ width:100%; border-radius:8px; outline:none; display:block; } */
+  .audio-player{ display:flex; gap:8px; align-items:center; flex:0 0 auto;}
+  audio{ width:100%; border-radius:8px; outline:none; }
+
+  /* footer nav */
+  .footer{ display:flex; 
+    justify-content:space-between; 
+    align-items:center; 
+    padding:12px 14px; gap:12px;
+    background:linear-gradient(180deg,#f8fbff, #ffffff); 
+    flex: 0 0 auto;
+  }
+
+  .nav-btn{ padding:8px 12px; border-radius:10px; 
+    border:1px solid rgba(6,10,20,0.06);
+     background:white; cursor:pointer; font-weight:700; }
+  .home-btn{ width:44px; height:44px; 
+    border-radius:999px; display:inline-grid; 
+    place-items:center; 
+    background:linear-gradient(90deg,var(--fun1),var(--fun2)); 
+    color:#042; 
+    box-shadow:0 8px 18px rgba(12,18,40,0.06); 
+    border:none; cursor:pointer; }
+
+  /* small responsive */
+  @media (max-width:480px){
+    .image-area img{ max-height:32vhpx; }
+    body{padding:8px;}
+    .frame{ height: calc(100vh - 16px); }
+    .topbar, .footer{ padding:10px; }
+    .lang-select{ padding:6px 8px;  }
+  }
+
+  @media (max-height:360px){
+    .image-area img{ max-height: 28vh; }
+  }
+
+  /* accessibility focus */
+  .nav-btn:focus, .home-btn:focus, .info-btn:focus, .lang-select:focus { outline:3px solid rgba(42,82,152,0.15); outline-offset:2px; }
+  
+</style>
+</head>
+<body>
+  <div class="frame" role="application" aria-label="FunScience Gallery viewer">
+    <!-- Top bar: language left, title center, info right -->
+    <div class="topbar">
+      <div class="lang-wrap" title="Choose language">
+        <select id="langSelect" class="lang-select" aria-label="Select language">
+          <option value="en">English (India)</option>
+          <option value="mr">Marathi (India)</option>
+          <option value="hi">Hindi (India)</option>
+        </select>
+      </div>
+
+      <div class="title">FunScience Gallery</div>
+
+      <button id="infoBtn" class="info-btn" aria-label="More info">i</button>
+    </div>
+
+    <!-- image -->
+    <div class="image-area">
+      <img id="photoImg" src="fusionreactor.jpeg" alt="Photo 1">
+    </div>
+
+    <!-- content section -->
+    <div class="content">
+      <div class="photo-heading" id="photoHeading">Photo One</div>
+      <div class="desc" id="photoDesc">Loading description…</div>
+
+    </div>
+    
+    <div class="audio-player" aria-label="Audio player">
+      <!-- recorded audio -->
+      <audio id="audioPlayer" controls preload="metadata">
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+    <!-- footer with nav -->
+    <div class="footer">
+      <button id="backBtn" class="nav-btn" aria-label="Go to previous">Back</button>
+
+      <button id="homeBtn" class="home-btn" title="Home" aria-label="Home">🏠</button>
+
+      <button id="nextBtn" class="nav-btn" aria-label="Go to next">Next</button>
+    </div>
+  </div>
+
+<script>
+/* ================================
+   DATA STRUCTURE: EXHIBIT GALLERY
+   Each exhibit is at index 0..11
+   ================================ */
+const exhibits = {
+
+  0: {
+    image: "image1.jpeg",
+    audio: {
+      en: "audio1_en.mp3",
+      hi: "audio1_hi.mp3",
+      mr: "audio1_mr.mp3"
+    },
+    title: {
+      en: "Vortex 1",
+      hi: "वॉर्टेक्स",
+      mr: "वॉर्टेक्स"
+    },
+    text: {
+      en: "json:photo1_en.json",
+      hi: "json:photo1_hi.json",
+      mr: "json:photo1_mr.json"
+    }
+  },
+
+  1: {
+    image: "image2.jpeg",
+    audio: {
+      en: "audio2_en.mp3",
+      hi: "audio2_hi.mp3",
+      mr: "audio2_mr.mp3"
+    },
+    title: {
+      en: "Fusion Reactor 2",
+      hi: "संल्लयन संयंत्र",
+      mr: "संल्लयन संयंत्र"
+    },
+    text: {
+      en: "json:photo2_en.json",
+      hi: "json:photo2_hi.json",
+      mr: "json:photo2_mr.json"
+    }
+  },
+
+  2: {
+    image: "image1.jpeg",
+    audio: {
+      en: "audio1.mp3",
+      hi: "audio1.mp3",
+      mr: "audio1.mp3"
+    },
+    title: {
+      en: "Vertex 3",
+      hi: "वॉर्टेक्स",
+      mr: "वॉर्टेक्स"
+    },
+    text: {
+      en: "json:photo1_en.json",
+      hi: "json:photo1_hi.json",
+      mr: "json:photo1_mr.json"
+    }
+  },
+    
+  3: {
+    image: "image2.jpeg",
+    audio: {
+      en: "audio2.mp3",
+      hi: "audio2.mp3",
+      mr: "audio2.mp3"
+    },
+    title: {
+      en: "Fusion Reactor 4",
+      hi: "संल्लयन संयंत्र",
+      mr: "संल्लयन संयंत्र"
+    },
+    text: {
+      en: "json:photo2_en.json",
+      hi: "json:photo2_hi.json",
+      mr: "json:photo2_mr.json"
+    }
+  },
+
+  4: {
+    image: "image1.jpeg",
+    audio: {
+      en: "audio1.mp3",
+      hi: "audio1.mp3",
+      mr: "audio1.mp3"
+    },
+    title: {
+      en: "Vertex 5",
+      hi: "वॉर्टेक्स",
+      mr: "वॉर्टेक्स"
+    },
+    text: {
+      en: "json:photo1_en.json",
+      hi: "json:photo1_hi.json",
+      mr: "json:photo1_mr.json"
+    }
+  },
+
+  5: {
+    image: "image2.jpeg",
+    audio: {
+      en: "audio2.mp3",
+      hi: "audio2.mp3",
+      mr: "audio2.mp3"
+    },
+    title: {
+      en: "Fusion Reactor 6",
+      hi: "संल्लयन संयंत्र",
+      mr: "संल्लयन संयंत्र"
+    },
+    text: {
+      en: "json:photo2_en.json",
+      hi: "json:photo2_hi.json",
+      mr: "json:photo2_mr.json"
+    }
+  },
+
+  6: {
+    image: "image1.jpeg",
+    audio: {
+      en: "audio1.mp3",
+      hi: "audio1.mp3",
+      mr: "audio1.mp3"
+    },
+    title: {
+      en: "Vertex 7",
+      hi: "वॉर्टेक्स",
+      mr: "वॉर्टेक्स"
+    },
+    text: {
+      en: "json:photo1_en.json",
+      hi: "json:photo1_hi.json",
+      mr: "json:photo1_mr.json"
+    }
+  },
+    7: {
+        image: "image2.jpeg",
+        audio: {
+        en: "audio2.mp3",
+        hi: "audio2.mp3",
+        mr: "audio2.mp3"
+        },
+        title: {
+        en: "Fusion Reactor 8",
+        hi: "संल्लयन संयंत्र",
+        mr: "संल्लयन संयंत्र"
+        },
+        text: {
+        en: "json:photo2_en.json",
+        hi: "json:photo2_hi.json",
+        mr: "json:photo2_mr.json"
+        }
+    },
+    8: {
+        image: "image1.jpeg",
+        audio: {
+        en: "audio1.mp3",
+        hi: "audio1.mp3",
+        mr: "audio1.mp3"
+        },
+        title: {
+        en: "Vertex 9",
+        hi: "वॉर्टेक्स",
+        mr: "वॉर्टेक्स"
+        },
+        text: {
+        en: "json:photo1_en.json",
+        hi: "json:photo1_hi.json",
+        mr: "json:photo1_mr.json"
+        }
+    },
+    9: {
+        image: "image2.jpeg",
+        audio: {
+        en: "audio2.mp3",
+        hi: "audio2.mp3",
+        mr: "audio2.mp3"
+        },
+        title: {
+        en: "Fusion Reactor 10",
+        hi: "संल्लयन संयंत्र",
+        mr: "संल्लयन संयंत्र"
+        },
+        text: {
+        en: "json:photo2_en.json",
+        hi: "json:photo2_hi.json",
+        mr: "json:photo2_mr.json"
+        }
+    },
+    10: {
+        image: "image1.jpeg",
+        audio: {
+        en: "audio1.mp3",
+        hi: "audio1.mp3",
+        mr: "audio1.mp3"
+        },
+        title: {
+        en: "Vertex 11",
+        hi: "वॉर्टेक्स",
+        mr: "वॉर्टेक्स"
+        },
+        text: {
+        en: "json:photo1_en.json",
+        hi: "json:photo1_hi.json",
+        mr: "json:photo1_mr.json"
+        }
+    },
+    11: {
+        image: "image2.jpeg",
+        audio: {
+        en: "audio2.mp3",
+        hi: "audio2.mp3",
+        mr: "audio2.mp3"
+        },
+        title: {
+        en: "Fusion Reactor 12",
+        hi: "संल्लयन संयंत्र",
+        mr: "संल्लयन संयंत्र"
+        },
+        text: {
+        en: "json:photo2_en.json",
+        hi: "json:photo2_hi.json",
+        mr: "json:photo2_mr.json"
+        }
+    }
+    
+
+};
+
+let currentId = 0;  
+const TOTAL = 12;
+
+/* DOM Elements */
+const photoImg      = document.getElementById("photoImg");
+const photoHeading  = document.getElementById("photoHeading");
+const photoDesc     = document.getElementById("photoDesc");
+const audioPlayer   = document.getElementById("audioPlayer");
+const langSelect    = document.getElementById("langSelect");
+
+/* Utility: wrap-around indexing */
+function clamp(id){
+  return (id + TOTAL) % TOTAL;
+}
+
+/* Main content renderer */
+function setContent(id){
+  currentId = clamp(id);
+  updateLanguageContent();
+}
+
+function updateLanguageContent(){
+  const item = exhibits[currentId];
+  const lang = langSelect.value;
+
+  /* IMAGE */
+  photoImg.src = item.image;
+  photoImg.alt = item.title.en;
+
+  /* TITLE */
+  photoHeading.textContent =
+    item.title[lang] || item.title.en;
+
+  /* TEXT (inline, file:, json:) */
+  const textVal = item.text[lang];
+
+  if(!textVal){
+    photoDesc.textContent = "No description available.";
+  }
+
+  // Load JSON file
+  else if(textVal.startsWith("json:")){
+    const file = textVal.replace("json:","");
+    fetch(file)
+      .then(r => r.json())
+      .then(data => {
+        photoDesc.textContent = data.description || "No description found.";
+      })
+      .catch(() => {
+        photoDesc.textContent = "Error loading description.";
+      });
+  }
+
+  // Load TXT
+  else if(textVal.startsWith("file:")){
+    const file = textVal.replace("file:","");
+    fetch(file)
+      .then(r => r.text())
+      .then(txt => photoDesc.textContent = txt)
+      .catch(() => photoDesc.textContent = "Error loading text.");
+  }
+
+  // Inline text
+  else {
+    photoDesc.textContent = textVal;
+  }
+
+  /* AUDIO */
+  audioPlayer.src = item.audio[lang] || "";
+}
+
+/* Navigation buttons */
+document.getElementById("nextBtn").onclick = () => setContent(currentId + 1);
+document.getElementById("backBtn").onclick = () => setContent(currentId - 1);
+document.getElementById("homeBtn").onclick = () => setContent(0);
+
+langSelect.onchange = updateLanguageContent;
+
+/* Initial load */
+setContent(0);
+</script>
+
+</body>
+</html>
