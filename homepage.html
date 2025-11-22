@@ -455,6 +455,10 @@ function updateLanguageContent(){
   /* AUDIO */
   audioPlayer.src = item.audio[lang] || "";
 }
+  /* Info button */
+document.getElementById('infoBtn').addEventListener('click', () => {
+  alert('FunScience Gallery — Use the language dropdown on the top-left to switch languages. Audio and text change per language.');
+});
 
 /* Navigation buttons */
 document.getElementById("nextBtn").onclick = () => setContent(currentId + 1);
@@ -469,5 +473,6 @@ setContent(0);
 
 </body>
 </html>
+
 
 
