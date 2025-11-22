@@ -80,7 +80,14 @@
 
   .nav-btn{ padding:8px 12px; border-radius:10px; 
     border:1px solid rgba(6,10,20,0.06);
-     background:white; cursor:pointer; font-weight:700; }
+     /* background:white; cursor:pointer; font-weight:700; */
+      background: linear-gradient(90deg,var(--fun1),var(--fun2));
+    color: #042;
+    border: none;
+    cursor: pointer;
+    font-weight:700;
+    box-shadow:0 6px 14px rgba(12,18,40,0.06);       
+    }
   .home-btn{ width:44px; height:44px; 
     border-radius:999px; display:inline-grid; 
     place-items:center; 
@@ -113,9 +120,9 @@
     <div class="topbar">
       <div class="lang-wrap" title="Choose language">
         <select id="langSelect" class="lang-select" aria-label="Select language">
-          <option value="en">English (India)</option>
-          <option value="mr">Marathi (India)</option>
-          <option value="hi">Hindi (India)</option>
+          <option value="en">English</option>
+          <option value="mr">Marathi</option>
+          <option value="hi">Hindi</option>
         </select>
       </div>
 
@@ -138,7 +145,7 @@
     
     <div class="audio-player" aria-label="Audio player">
       <!-- recorded audio -->
-      <audio id="audioPlayer" controls preload="metadata">
+      <audio id="audioPlayer" controls controlsList="nodownload" preload="metadata" oncontextmenu="return false;">
         Your browser does not support the audio element.
       </audio>
     </div>
@@ -473,6 +480,7 @@ setContent(0);
 
 </body>
 </html>
+
 
 
 
