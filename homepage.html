@@ -121,8 +121,8 @@
       <div class="lang-wrap" title="Choose language">
         <select id="langSelect" class="lang-select" aria-label="Select language">
           <option value="en">English</option>
-          <option value="mr">Hindi</option>
-          <option value="hi">Marathi</option>
+          <option value="mr">Marathi</option>
+          <option value="hi">Hindi</option>
         </select>
       </div>
 
@@ -441,7 +441,7 @@ function updateLanguageContent(){
         photoDesc.textContent = data.description || "No description found.";
       })
       .catch(() => {
-        photoDesc.textContent = "Error loading description.";
+        photoDesc.textContent = "Development in Progress";
       });
   }
 
@@ -480,6 +480,7 @@ setContent(0);
 
 </body>
 </html>
+
 
 
 
